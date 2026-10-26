@@ -58,7 +58,7 @@ flowchart LR
 
 The Namma Space architecture is split into two decoupled layers:
 1. **The Cloud Compute Pipeline (Google Colab T4 GPU)**: Handles heavy numeric tensor processing, SIFT feature extraction, non-linear bundle adjustment, depth map estimation, and Poisson partial differential equation meshing.
-2. **The Client-Side 3D Web Viewer (Netlify / Static CDN)**: Handles real-time WebGL rendering at 60 FPS, collision detection, responsive desktop/mobile inputs, and dynamic asset management with zero install requirements.
+2. **The Client-Side 3D Web Viewer ([Live on Netlify](https://namma-space.netlify.app/))**: Handles real-time WebGL rendering at 60 FPS, collision detection, responsive desktop/mobile inputs, and dynamic asset management with zero install requirements.
 
 ```mermaid
 flowchart TD

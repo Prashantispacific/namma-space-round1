@@ -4,7 +4,7 @@
 
 > Transform smartphone indoor walkthrough videos into photorealistic, interactive 3D digital twins — explorable at 60 FPS in any web browser, on any device.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Netlify-00C7B7?style=for-the-badge&logo=netlify)](https://your-site.netlify.app)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-namma--space.netlify.app-00C7B7?style=for-the-badge&logo=netlify)](https://namma-space.netlify.app/)
 [![Colab Pipeline](https://img.shields.io/badge/Pipeline-Google_Colab-F9AB00?style=for-the-badge&logo=googlecolab)](https://colab.research.google.com/)
 [![Interactive Guide](https://img.shields.io/badge/Architecture-Interactive_Guide_HTML-7928CA?style=for-the-badge)](guide.html)
 
@@ -251,14 +251,11 @@ This ensures the app is **100% playable out-of-the-box** for judges.
 3. Right-click `index.html` → **Open with Live Server**.
 4. The viewer opens at `http://127.0.0.1:5500` — works instantly, no build step required.
 
-### Netlify Deployment
+### Netlify Production Deployment
 
-1. Go to [app.netlify.com](https://app.netlify.com).
-2. **Drag and drop** the entire `namma-space-round1/` folder onto the Netlify dashboard.
-3. Your site is live in seconds with a shareable URL.
-4. To update the model: add `room.glb` to `public/models/`, re-drag the folder.
-
-> **Alternative**: Connect to GitHub for automatic deployments on push.
+* **Live URL**: **[https://namma-space.netlify.app/](https://namma-space.netlify.app/)**
+* **Deployment Type**: Serverless Zero-Build Static Deployment (connected directly to GitHub repository for automatic CD on push).
+* **Manual Redeploy (Alternative)**: Drag and drop the `namma-space-round1/` directory onto the [Netlify Dashboard](https://app.netlify.com).
 
 ---
 
