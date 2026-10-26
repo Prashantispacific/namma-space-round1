@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Namma Space — 3D Walkthrough</title>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <!-- Three.js v0.160.0 ES6 Module Import Map (zero-install CDN) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- WebGL Canvas -->
+    <canvas id="viewport"></canvas>
+
+    <!-- Center Crosshair -->
+    <div id="crosshair">
+        <span class="dot"></span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loading-title">Namma Space</div>
+        <div class="loading-bar-track">
+            <div class="loading-bar-fill" id="loading-bar"></div>
+        </div>
+        <div class="loading-status" id="loading-status">Initializing engine…</div>
+    </div>
+
+    <!-- Click-to-Start Overlay (Desktop) -->
+    <div id="start-overlay">
+        <div class="start-card">
+            <div class="start-badge">TECHFEST IIT BOMBAY 2026-27</div>
+            <div class="start-title">Namma Space 3D Digital Twin</div>
+            <div class="start-subtext">First-person spatial walkthrough engine with raycast obstacle collision</div>
+            
+            <button class="start-enter-btn" id="start-enter-action">🚀 Click to Enter Space</button>
+
+            <div class="start-section-heading">Desktop Controls</div>
+            <div class="controls-grid">
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></span>
+                    <span class="ctrl-desc">Walk & Strafe</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>Shift</kbd></span>
+                    <span class="ctrl-desc">Sprint (5.5 m/s)</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>Mouse</kbd></span>
+                    <span class="ctrl-desc">Look 360° (Yaw/Pitch)</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>F</kbd></span>
+                    <span class="ctrl-desc">Toggle Free-Fly / No-Clip</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>Q</kbd> / <kbd>E</kbd></span>
+                    <span class="ctrl-desc">Lower / Raise Eye Height</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>Space</kbd> / <kbd>Ctrl</kbd></span>
+                    <span class="ctrl-desc">Fly Up / Down (in Free-Fly)</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>R</kbd></span>
+                    <span class="ctrl-desc">Reset Spawn Position</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>H</kbd></span>
+                    <span class="ctrl-desc">Toggle Bottom HUD Bar</span>
+                </div>
+                <div class="ctrl-cell">
+                    <span class="ctrl-keys"><kbd>Esc</kbd></span>
+                    <span class="ctrl-desc">Release Mouse Cursor</span>
+                </div>
+            </div>
+
+            <div class="start-mobile-note">
+                📱 <strong>Smartphone / Touch:</strong> Left virtual thumbstick to walk & strafe · Drag right screen half to look around.
+            </div>
+        </div>
+    </div>
+
+    <!-- HUD Panel — Top-Left Telemetry -->
+    <div id="hud-panel">
+        <div class="hud-title">Telemetry</div>
+        <div class="hud-row">
+            <span class="hud-label">FPS</span>
+            <span class="hud-value fps" id="hud-fps">--</span>
+        </div>
+        <div class="hud-row">
+            <span class="hud-label">X</span>
+            <span class="hud-value" id="hud-x">0.00</span>
+        </div>
+        <div class="hud-row">
+            <span class="hud-label">Y</span>
+            <span class="hud-value" id="hud-y">0.00</span>
+        </div>
+        <div class="hud-row">
+            <span class="hud-label">Z</span>
+            <span class="hud-value" id="hud-z">0.00</span>
+        </div>
+        <div class="hud-row">
+            <span class="hud-label">Mode</span>
+            <span class="hud-value collision-on" id="hud-mode">COLLISION</span>
+        </div>
+        <button id="hud-copy-btn">Copy Coords</button>
+    </div>
+
+    <!-- HUD Buttons — Top-Right -->
+    <div id="hud-buttons">
+        <button class="hud-btn" id="btn-pointer-toggle" title="Toggle Mouse Look / Free Cursor (M / Esc)">🎯 Lock Look</button>
+        <button class="hud-btn" id="btn-controls">⌨️ Controls</button>
+        <button class="hud-btn" id="btn-load-glb">📂 Load .GLB Model</button>
+        <button class="hud-btn" id="btn-sop">📋 Capture SOP</button>
+        <a href="guide.html" target="_blank" class="hud-btn" style="text-decoration: none; text-align: center;">📖 Guide</a>
+        <button class="hud-btn" id="btn-noclip">👻 No-Clip: OFF</button>
+        <button class="hud-btn" id="mobile-noclip-btn">👻 Free-Fly</button>
+    </div>
+
+    <!-- Hidden File Input for GLB Hot-Swap -->
+    <input type="file" id="file-input" accept=".glb,.gltf">
+
+    <!-- Exposure Control — Bottom-Right -->
+    <div id="exposure-control">
+        <label for="exposure-slider">Exposure</label>
+        <input type="range" id="exposure-slider" min="0.2" max="3.0" step="0.05" value="1.0">
+        <span id="exposure-value">1.00</span>
+    </div>
+
+    <!-- Mobile Virtual Joystick — Bottom-Left -->
+    <div id="joystick-zone">
+        <div id="joystick-base">
+            <div id="joystick-knob"></div>
+        </div>
+    </div>
+
+    <!-- Persistent Bottom Controls HUD Bar -->
+    <div id="controls-hud">
+        <span class="hud-pill"><kbd>WASD</kbd> Move</span>
+        <span class="hud-pill"><kbd>Shift</kbd> Sprint</span>
+        <span class="hud-pill"><kbd>Mouse</kbd> Look</span>
+        <span class="hud-pill"><kbd>Esc</kbd>/<kbd>M</kbd> Free Cursor</span>
+        <span class="hud-pill"><kbd>F</kbd> No-Clip</span>
+        <span class="hud-pill"><kbd>Q</kbd>/<kbd>E</kbd> Height</span>
+        <span class="hud-pill"><kbd>R</kbd> Reset</span>
+        <button id="btn-toggle-controls-hud" title="Controls Help (H)">⌨️</button>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast"></div>
+
+    <!-- Controls Modal -->
+    <div id="controls-modal-backdrop">
+        <div id="controls-modal">
+            <button id="controls-modal-close">✕</button>
+            <div class="modal-title">Walkthrough Controls & Shortcuts</div>
+            <div class="modal-subtitle">
+                Complete controls reference for Desktop Keyboard/Mouse and Mobile Touch devices.
+            </div>
+
+            <div class="modal-controls-section">
+                <div class="section-title">🖥️ Desktop Controls</div>
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Key / Input</th>
+                            <th>Action</th>
+                            <th>Speed / Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> or <kbd>↑</kbd> <kbd>←</kbd> <kbd>↓</kbd> <kbd>→</kbd></td>
+                            <td>Walk & Strafe</td>
+                            <td>3.0 m/s with velocity damping</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>Shift</kbd></td>
+                            <td>Sprint</td>
+                            <td>5.5 m/s high-speed movement</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>Mouse Move</kbd></td>
+                            <td>Rotate Camera Look</td>
+                            <td>Yaw 360°, Pitch clamped [-80°, +80°]</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>F</kbd></td>
+                            <td>Toggle No-Clip / Free-Fly</td>
+                            <td>Disables wall collision & floor snapping</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>Space</kbd> / <kbd>Ctrl</kbd></td>
+                            <td>Fly Up / Fly Down</td>
+                            <td>Vertical movement while in Free-Fly mode</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>Q</kbd> / <kbd>E</kbd></td>
+                            <td>Adjust Eye Height</td>
+                            <td>Fine-tune camera height ±0.1m</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>R</kbd></td>
+                            <td>Reset Position</td>
+                            <td>Return to room entrance spawn point</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>H</kbd></td>
+                            <td>Toggle Bottom HUD Bar</td>
+                            <td>Show or hide on-screen controls bar</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>Esc</kbd></td>
+                            <td>Release Mouse Pointer</td>
+                            <td>Exits pointer lock mode</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-controls-section" style="margin-top: 20px;">
+                <div class="section-title">📱 Mobile Smartphone Controls</div>
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Gesture / Element</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge-touch">Left Virtual Thumbstick</span></td>
+                            <td>Analog Move & Strafe</td>
+                            <td>360° smooth velocity vector integration</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge-touch">Right Screen Touch Drag</span></td>
+                            <td>Camera Look Rotation</td>
+                            <td>Smooth yaw & vertical pitch control</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge-touch">👻 Free-Fly Button</span></td>
+                            <td>Toggle Collision Mode</td>
+                            <td>Roam through noisy photogrammetry meshes</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge-touch">📂 Load .GLB Button</span></td>
+                            <td>Device Model Hot-Swap</td>
+                            <td>Load custom 3D models from phone storage</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-controls-section" style="margin-top: 20px;">
+                <div class="section-title">🧭 Spatial Telemetry & Features</div>
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Copy Coords</strong></td>
+                            <td>Copies live <code>(X, Y, Z)</code> coordinates to clipboard for Round 2 POI indexing.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Exposure Slider</strong></td>
+                            <td>Dynamically adjusts ACESFilmic tone mapping exposure from 0.2× to 3.0×.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Capture SOP</strong></td>
+                            <td>Opens 11-step interactive camera checklist for filming indoor walkthroughs.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOP Modal -->
+    <div id="sop-modal-backdrop">
+        <div id="sop-modal">
+            <button id="sop-modal-close">✕</button>
+            <div class="modal-title">Capture SOP</div>
+            <div class="modal-subtitle">
+                Standard Operating Procedure for filming indoor spaces with a smartphone.
+                Check each step as you complete it before starting the recording.
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-1">
+                <label class="checklist-label" for="sop-1">
+                    <span class="step-num">01</span>
+                    Lock Auto-Exposure (AE Lock) on your smartphone camera to prevent flickering.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-2">
+                <label class="checklist-label" for="sop-2">
+                    <span class="step-num">02</span>
+                    Lock Auto-Focus (AF Lock) at approximately 2 meters distance.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-3">
+                <label class="checklist-label" for="sop-3">
+                    <span class="step-num">03</span>
+                    Disable Electronic Image Stabilization (EIS) in camera settings.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-4">
+                <label class="checklist-label" for="sop-4">
+                    <span class="step-num">04</span>
+                    Turn on all room lights and close curtains/blinds for consistent lighting.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-5">
+                <label class="checklist-label" for="sop-5">
+                    <span class="step-num">05</span>
+                    Place 3–5 fiducial sticky notes on blank or textureless walls for feature anchors.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-6">
+                <label class="checklist-label" for="sop-6">
+                    <span class="step-num">06</span>
+                    Set camera to record at 1080p resolution, 30 FPS.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-7">
+                <label class="checklist-label" for="sop-7">
+                    <span class="step-num">07</span>
+                    Walk a slow perimeter crab-walk (camera facing walls) at standing eye height (~1.6m).
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-8">
+                <label class="checklist-label" for="sop-8">
+                    <span class="step-num">08</span>
+                    Repeat the perimeter walk at waist height (~0.9m) for floor and lower-wall coverage.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-9">
+                <label class="checklist-label" for="sop-9">
+                    <span class="step-num">09</span>
+                    Walk 2–3 diagonal passes through the room center for depth variety.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-10">
+                <label class="checklist-label" for="sop-10">
+                    <span class="step-num">10</span>
+                    Maintain 60–70% visual overlap between consecutive viewpoints.
+                </label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="sop-11">
+                <label class="checklist-label" for="sop-11">
+                    <span class="step-num">11</span>
+                    Total recording time: 2–5 minutes per room. Move slowly and steadily.
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Application Module -->
+    <script type="module" src="./js/app.js"></script>
+
+</body>
+</html>

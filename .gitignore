@@ -1,0 +1,26 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Heavy media files (manual upload)
+*.mp4
+test/extracted_frames/*.jpg
+
+# Test artifacts and caches
+test/test_extracted/
+test/actual_viewer_render.png
+*.tmp
+*.log

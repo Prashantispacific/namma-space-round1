@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namma Space — Complete Architectural & Engineering Guide</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX for crisp mathematical rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" 
+            onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <style>
+        :root {
+            --bg-body: #0a0a0c;
+            --bg-surface: #121216;
+            --bg-card: rgba(22, 22, 28, 0.75);
+            --bg-card-hover: rgba(28, 28, 36, 0.9);
+            --border-subtle: 1px solid rgba(255, 255, 255, 0.08);
+            --border-accent: 1px solid rgba(79, 195, 247, 0.3);
+            --text-main: rgba(255, 255, 255, 0.92);
+            --text-muted: rgba(255, 255, 255, 0.55);
+            --text-faint: rgba(255, 255, 255, 0.3);
+            --accent: #4fc3f7;
+            --accent-glow: rgba(79, 195, 247, 0.15);
+            --success: #66bb6a;
+            --warning: #ffa726;
+            --purple: #ab47bc;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'Fira Code', 'SF Mono', monospace;
+            --sidebar-width: 290px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 15px;
+            line-height: 1.7;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Navigation --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: #0d0d10;
+            border-right: var(--border-subtle);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        #sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .brand-box {
+            padding-bottom: 16px;
+            border-bottom: var(--border-subtle);
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-badge {
+            font-size: 10px;
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(79, 195, 247, 0.25);
+            font-family: var(--font-mono);
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-faint);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 2px solid var(--accent);
+        }
+
+        /* --- Main Content Area --- */
+        #content {
+            flex: 1;
+            padding: 40px 60px 100px;
+            max-width: 1060px;
+            margin: 0 auto;
+        }
+
+        /* Header Hero */
+        .hero {
+            padding: 40px 0 50px;
+            border-bottom: var(--border-subtle);
+            margin-bottom: 48px;
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: var(--border-subtle);
+            background: var(--bg-surface);
+        }
+        .tag-blue { color: var(--accent); border-color: rgba(79, 195, 247, 0.25); }
+        .tag-green { color: var(--success); border-color: rgba(102, 187, 106, 0.25); }
+        .tag-amber { color: var(--warning); border-color: rgba(255, 167, 38, 0.25); }
+        .tag-purple { color: var(--purple); border-color: rgba(171, 71, 188, 0.25); }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        /* Section Headings */
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 50px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: var(--border-subtle);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 32px 0 14px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 20px 0 10px;
+            color: var(--accent);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        /* Cards & Containers */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: var(--border-subtle);
+            border-radius: 10px;
+            padding: 24px 28px;
+            margin: 24px 0;
+            transition: border-color 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .callout {
+            border-left: 3px solid var(--accent);
+            background: rgba(79, 195, 247, 0.05);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .callout-success {
+            border-left-color: var(--success);
+            background: rgba(102, 187, 106, 0.05);
+        }
+
+        .callout-warning {
+            border-left-color: var(--warning);
+            background: rgba(255, 167, 38, 0.05);
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #0d0d12;
+            border: var(--border-subtle);
+            border-radius: 8px;
+            padding: 18px 20px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 18px 0;
+            color: #d8dee9;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            background: rgba(255, 255, 255, 0.07);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent);
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 13.5px;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.04);
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            vertical-align: top;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Diagrams */
+        .diagram-box {
+            background: #0d0d12;
+            border: var(--border-subtle);
+            border-radius: 10px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .diagram-title {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-faint);
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            #sidebar { width: 100%; height: auto; position: static; }
+            #content { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div class="brand-box">
+            <div class="brand-title">
+                <span>NAMMA SPACE</span>
+                <span class="brand-badge">GUIDE</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Techfest IIT Bombay 2026-27</div>
+        </div>
+
+        <div>
+            <div class="nav-group-title">Foundations</div>
+            <ul class="nav-links">
+                <li><a href="#section-1">1. Problem Statement</a></li>
+                <li><a href="#section-2">2. System Architecture</a></li>
+                <li><a href="#section-3">3. Smartphone Optics & SOP</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <div class="nav-group-title">Reconstruction Pipeline</div>
+            <ul class="nav-links">
+                <li><a href="#section-4">4. OpenCV Frame Extraction</a></li>
+                <li><a href="#section-5">5. COLMAP Structure-from-Motion</a></li>
+                <li><a href="#section-6">6. PatchMatch Dense Stereo</a></li>
+                <li><a href="#section-7">7. Screened Poisson Meshing</a></li>
+                <li><a href="#section-8">8. GLB Serialization</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <div class="nav-group-title">Web Walkthrough Engine</div>
+            <ul class="nav-links">
+                <li><a href="#section-9">9. Three.js Engine Architecture</a></li>
+                <li><a href="#section-10">10. Physics, Collision & Mobile</a></li>
+                <li><a href="#section-11">11. Hardware Budgets</a></li>
+                <li><a href="#section-12">12. Bridge to Round 2 (Navigation)</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Article Content -->
+    <main id="content">
+
+        <!-- Hero Header -->
+        <header class="hero">
+            <div class="hero-tags">
+                <span class="tag tag-blue">Techfest IIT Bombay 2026-27</span>
+                <span class="tag tag-green">Round 1 Submission</span>
+                <span class="tag tag-amber">Zero-Install Three.js</span>
+                <span class="tag tag-purple">COLMAP GPU SfM</span>
+            </div>
+            <h1>Namma Space: Complete Engineering & Architectural Guide</h1>
+            <p class="hero-sub">
+                An exhaustive, first-principles exploration of smartphone photogrammetry, projective geometry, 
+                Poisson surface meshing, and high-performance WebGL browser engine mechanics.
+            </p>
+        </header>
+
+        <!-- Section 1 -->
+        <section id="section-1">
+            <h2>1. Executive Summary & Problem Statement</h2>
+            <p>
+                From shopping in sprawling furniture mega-stores like IKEA to navigating university lecture hall complexes, 
+                humans struggle with standard 2D floorplans. A 2D orthographic schematic lacks depth, sightlines, and real-world 
+                landmarks. <strong>Namma Space</strong> solves this by converting ordinary smartphone walkthrough videos into 
+                interactive, photorealistic 3D digital twins explorable at 60 FPS in any modern web browser.
+            </p>
+            <div class="callout">
+                <strong>The Inverse Vision Challenge:</strong> Standard camera sensors record 2D intensity grids 
+                $I(x, y)$, flattening the 3D physical world and discarding the depth coordinate $Z$. Reconstructing 
+                solid 3D spatial geometry requires reversing the optical perspective projection across hundreds of viewpoints.
+            </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section id="section-2">
+            <h2>2. High-Level System Architecture</h2>
+            <p>
+                The system couples an offline <strong>Cloud Reconstruction Pipeline</strong> (Google Colab T4 GPU) 
+                with a zero-install <strong>Client Web Walkthrough Engine</strong> (Netlify static hosting).
+            </p>
+            <div class="diagram-box">
+                <div class="diagram-title">System Pipeline Flowchart</div>
+                <pre class="mermaid">
+flowchart LR
+    A["📱 Phone Walkthrough\n(1080p MP4)"] --> B["⚡ OpenCV Blur-Filter\n(Laplacian > 60)"]
+    B --> C["🔬 COLMAP SfM\n(GPU SIFT + Matcher)"]
+    C --> D["🌊 PatchMatch Stereo\n(CUDA Dense MVS)"]
+    D --> E["📐 Screened Poisson\n(Octree Depth 9)"]
+    E --> F["📦 Trimesh Decimation\n(150K Triangles GLB)"]
+    F --> G["🌐 Three.js Web Viewer\n(WASD + Mobile Joystick)"]
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="section-3">
+            <h2>3. Smartphone Capture & Optical Physics</h2>
+            <p>
+                Consumer smartphones are engineered to create visually pleasing snapshots, not scientifically calibrated 
+                photogrammetry datasets. Without proper capture discipline, computer vision pipelines fail completely:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Optical Phenomenon</th>
+                        <th>Underlying Cause</th>
+                        <th>Impact on Vision Algorithms</th>
+                        <th>SOP Solution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Auto-Exposure Hunting</strong></td>
+                        <td>Phone dynamically alters ISO and shutter speed per frame.</td>
+                        <td>Identical physical points have different RGB values across frames, violating photometric consistency.</td>
+                        <td><strong>Lock Auto-Exposure (AE Lock)</strong> on medium luminance.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Auto-Focus Breathing</strong></td>
+                        <td>Internal lens elements shift to refocus dynamically.</td>
+                        <td>Internal camera calibration ($f_x, f_y$) constantly changes, breaking pinhole projection math.</td>
+                        <td><strong>Lock Auto-Focus (AF Lock)</strong> at ~2m fixed distance.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Electronic Stabilization (EIS)</strong></td>
+                        <td>Software warps frame edges to give a gimbal appearance.</td>
+                        <td>Non-linearly distorts Euclidean geometry, corrupting epipolar lines.</td>
+                        <td><strong>Turn EIS / Action Mode OFF</strong> in phone camera settings.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Textureless Blank Walls</strong></td>
+                        <td>Solid painted surfaces lack high-frequency contrast.</td>
+                        <td>SIFT feature extractors cannot find corners or gradients to match.</td>
+                        <td><strong>Place 3–5 colored sticky notes</strong> as fiducial anchors.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 4 -->
+        <section id="section-4">
+            <h2>4. Intelligent Keyframe Filtering (OpenCV Laplacian)</h2>
+            <p>
+                A 3-minute video at 30 FPS yields over 5,400 frames. Feeding blurry frames into a Structure-from-Motion 
+                pipeline poisons triangulation math. We apply the <strong>Discrete 2D Laplacian operator</strong> 
+                to measure second derivatives across pixel gradients:
+            </p>
+            <div class="card">
+                <h4>Laplacian Sharpness Formulation</h4>
+                $$\Delta I = \frac{\partial^2 I}{\partial x^2} + \frac{\partial^2 I}{\partial y^2}$$
+                $$\text{Sharpness Score} = \text{Var}(\Delta I) = \frac{1}{N} \sum_{x, y} \left( \Delta I(x, y) - \mu \right)^2$$
+                <p style="margin-top: 12px; font-size: 13.5px; color: var(--text-muted);">
+                    Sharp edges create extreme peaks in the second derivative, resulting in a high variance score. Motion-blurred 
+                    transitions yield low variance. We reject all frames below threshold <code>60.0</code>.
+                </p>
+            </div>
+<pre><code>def compute_blur_score(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Convolve with discrete Laplacian using 64-bit float precision
+    return cv2.Laplacian(gray, cv2.CV_64F).var()</code></pre>
+        </section>
+
+        <!-- Section 5 -->
+        <section id="section-5">
+            <h2>5. COLMAP Structure-from-Motion (SfM)</h2>
+            <p>
+                Structure-from-Motion simultaneously determines the 3D scene geometry and the 6-DoF position and orientation 
+                of every camera view:
+            </p>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>SIFT Feature Extraction</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">
+                        Identifies scale-space extrema across Difference-of-Gaussian (DoG) octaves. Each landmark receives 
+                        a 128-dimensional orientation invariant vector.
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>Sequential Matching + Loop Closure</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">
+                        Matches frame $i$ against neighboring frames $i \pm 5$. With loop detection enabled, it links the 
+                        final doorway view back to the start, eliminating corridor drift.
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>Bundle Adjustment (Levenberg-Marquardt)</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">
+                        Minimizes total reprojection error $\sum \|x_{ij} - \pi(P_i, X_j)\|^2$ across all cameras $P_i$ 
+                        and 3D points $X_j$ via robust non-linear optimization.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6 -->
+        <section id="section-6">
+            <h2>6. PatchMatch Dense Stereo & MVS</h2>
+            <p>
+                The sparse point cloud recovered by SfM contains only sharp corner points. Multi-View Stereo (MVS) 
+                reconstructs dense geometry across blank walls and furniture surfaces:
+            </p>
+            <div class="callout callout-success">
+                <strong>How PatchMatch Works:</strong> For every pixel, random 3D plane hypotheses (depth $d$, normal $\vec{n}$) 
+                are initialized and propagated across spatial and temporal neighbors. Candidates are scored using 
+                <strong>Normalized Cross-Correlation (NCC)</strong> across multi-view windows. Only depth estimates satisfying 
+                bidirectional geometric consistency (reprojection discrepancy &lt; 1px) are kept.
+            </div>
+            <p>The resulting point cloud is saved as <code>fused.ply</code> with millions of vertex-colored points.</p>
+        </section>
+
+        <!-- Section 7 -->
+        <section id="section-7">
+            <h2>7. Screened Poisson Surface Reconstruction</h2>
+            <p>
+                A point cloud is not traversable; rays pass straight through disconnected points. To create solid 
+                collidable walls and floors, we reconstruct a watertight triangle surface:
+            </p>
+            <div class="card">
+                <h4>Screened Poisson Formulation</h4>
+                $$\Delta \chi \equiv \nabla \cdot \nabla \chi = \nabla \cdot \vec{V}$$
+                $$\min_{\chi} \left( \int_{\Omega} \|\nabla \chi - \vec{V}\|^2 + \lambda \sum_{s \in \text{Points}} |\chi(s)|^2 \right)$$
+                <p style="margin-top: 10px; font-size: 13.5px; color: var(--text-muted);">
+                    An indicator function $\chi$ is computed across an adaptive Octree of depth 9. The surface is extracted 
+                    along the $\chi = 0.5$ boundary using Marching Cubes, followed by <strong>Quadric Edge Collapse Decimation</strong> 
+                    simplifying the mesh down to 150,000 faces for 60 FPS web rendering.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 8 -->
+        <section id="section-8">
+            <h2>8. GLB Serialization & Trimesh Export</h2>
+            <p>
+                Unlike legacy <code>.OBJ</code> files (which require multi-megabyte ASCII string parsing in JavaScript), 
+                <strong>Binary glTF (<code>.GLB</code>)</strong> packs scene hierarchy, materials, and raw IEEE 754 float 
+                vertex arrays directly into binary buffers. The browser transfers bytes straight to GPU VRAM with zero parsing overhead.
+            </p>
+<pre><code>import trimesh
+
+# Load reconstructed mesh with vertex colors
+mesh = trimesh.load('workspace/room.ply', force='mesh')
+
+# Export as binary GLB (automatically maps RGB to COLOR_0 buffer accessor)
+glb_bytes = mesh.export(file_type='glb')
+with open('room.glb', 'wb') as f:
+    f.write(glb_bytes)</code></pre>
+        </section>
+
+        <!-- Section 9 -->
+        <section id="section-9">
+            <h2>9. Three.js Engine Architecture</h2>
+            <p>
+                The frontend web viewer in <code>js/app.js</code> is engineered with zero build tools or npm dependencies, 
+                utilizing native browser ES6 module import maps:
+            </p>
+            <div class="diagram-box">
+                <div class="diagram-title">Engine Subsystem Architecture</div>
+                <pre class="mermaid">
+classDiagram
+    class ThreeEngine {
+        +THREE.Scene scene
+        +THREE.PerspectiveCamera camera
+        +THREE.WebGLRenderer renderer
+        +init()
+        +animate()
+    }
+    class LoaderSystem {
+        +GLTFLoader gltfLoader
+        +DRACOLoader dracoLoader
+        +loadModel(url)
+        +buildFallbackRoom()
+    }
+    class PhysicsSystem {
+        +THREE.Raycaster horizontalRay
+        +THREE.Raycaster downRay
+        +checkWallCollision()
+        +getFloorHeight()
+    }
+    class InputManager {
+        +PointerLockControls desktopControls
+        +VirtualJoystick mobileJoystick
+        +TouchLook touchRotation
+    }
+    ThreeEngine --> LoaderSystem
+    ThreeEngine --> PhysicsSystem
+    ThreeEngine --> InputManager
+                </pre>
+            </div>
+            <h4>Procedural Fallback Architectural Suite</h4>
+            <p>
+                If <code>room.glb</code> has not yet been placed in <code>public/models/</code>, the engine seamlessly builds 
+                an architectural demo suite (20m floor with grid, segmented walls with doorway cutouts, pillars, conference table, and lighting). 
+                Every demo element is registered into <code>collidableMeshes[]</code> so the application is completely playable immediately.
+            </p>
+        </section>
+
+        <!-- Section 10 -->
+        <section id="section-10">
+            <h2>10. Physics, Collisions & Mobile Touch Controls</h2>
+            
+            <h4>1. Gimbal Lock Elimination</h4>
+            <p>
+                By setting <code>camera.rotation.order = 'YXZ'</code>, global horizontal yaw is applied before local vertical pitch. 
+                Vertical pitch is clamped between $-80^\circ$ and $+80^\circ$ ($-1.396$ to $+1.396$ rad), eliminating roll twisting.
+            </p>
+
+            <h4>2. Cardinal Obstacle Sliding & Floor Snapping</h4>
+            <div class="callout">
+                <strong>Wall Sliding:</strong> Instead of freezing player velocity on collision, the engine tests the X-component 
+                and Z-component of motion separately against a <code>0.45m</code> cardinal raycaster. This enables natural wall-sliding. 
+                A downward raycaster maintains the camera at exactly <code>1.6m</code> human eye height above uneven floors.
+            </div>
+
+            <h4>3. Custom Mobile Virtual Thumbstick</h4>
+            <p>
+                Touch events on the bottom-left partition are clamped to a $50\text{px}$ radius circle. Normalized displacement coordinates 
+                $\Delta x / R, \Delta y / R$ are integrated into the velocity damping loop, while drag events on the right $65\%$ of the screen 
+                smoothly rotate the camera.
+            </p>
+        </section>
+
+        <!-- Section 11 -->
+        <section id="section-11">
+            <h2>11. Hardware Optimization Strategy</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Device Target</th>
+                        <th>Hardware Specifications</th>
+                        <th>Optimization Applied</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Local Laptop</strong><br>(ASUS Vivobook 15)</td>
+                        <td>Intel Core i3-1215U, 8GB RAM, Intel UHD Graphics</td>
+                        <td>
+                            • Pixel ratio capped at <code>Math.min(devicePixelRatio, 1.5)</code><br>
+                            • Triangle budget capped at 150K faces<br>
+                            • Velocity damping prevents expensive multi-step physics sweeps
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mobile Device</strong><br>(Vivo T3 5G)</td>
+                        <td>MediaTek Dimensity 7200, 8GB RAM, Android 16</td>
+                        <td>
+                            • Native touch listeners with passive handlers<br>
+                            • Minimalist HUD without heavy DOM reflows<br>
+                            • Google gstatic WebAssembly DRACO decompression
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 12 -->
+        <section id="section-12">
+            <h2>12. Bridge to Round 2: Indoor Navigation</h2>
+            <p>
+                The Techfest IIT Bombay problem statement outlines <strong>Points of Interest (POI) tagging</strong> and 
+                <strong>desktop pathfinding navigation</strong> for Round 2. Our Round 1 codebase lays the foundation:
+            </p>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Coordinate Logger</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">
+                        The HUD's <strong>"Copy Coords"</strong> button lets operators log exact real-world landmark coordinates 
+                        into <code>poi_database.json</code> during venue surveys.
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>Navigation Mesh Graph</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">
+                        The floor geometry inside <code>collidableMeshes[]</code> serves as the direct spatial costmap 
+                        for A* pathfinding and animated directional ribbons in Round 2.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Mermaid.js for vector diagram rendering -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#0d0d12',
+                primaryColor: '#16161f',
+                primaryTextColor: '#4fc3f7',
+                primaryBorderColor: 'rgba(79, 195, 247, 0.4)',
+                lineColor: 'rgba(255, 255, 255, 0.4)',
+                secondaryColor: '#1a1a24',
+                tertiaryColor: '#121218'
+            }
+        });
+    </script>
+
+    <!-- Active Navigation Link Tracking -->
+    <script>
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
